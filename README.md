@@ -5,6 +5,8 @@ An implementation with React and an Azure Function to upload (and encrypt) files
 
 To deploy the solution I have implemented a GitHub Action (triggered on main branch) that publish the frontend and the backend to an Azure Static Web App.
 
+![image](https://user-images.githubusercontent.com/2757486/158541841-e0d9af2e-a91e-4906-aef3-1526ba7c143b.png)
+
 ## Tech Stack
 
 **Client:** React
