@@ -2,13 +2,12 @@ import 'react-dropzone-uploader/dist/styles.css'
 import Dropzone from 'react-dropzone-uploader'
 
 const DropzoneComponent = () => {
-  const getUploadParams = ({ meta }) => { 
+  const getUploadParams = ({ meta , file }) => { 
     
-    console.log("uploadddddddd");
+    const body = new FormData();
+    body.append('files', file);
 
-    
-
-    return { url: 'https://httpbin.org/post' } 
+    return { url: '/api/uploader', body } 
   }
   
   const handleChangeStatus = ({ meta, file }, status) => { console.log(status, meta, file) }
@@ -25,6 +24,9 @@ const DropzoneComponent = () => {
       getUploadParams={getUploadParams}
       onChangeStatus={handleChangeStatus}
       onSubmit={handleSubmit}
+      styles={{
+        dropzoneActive: { borderColor: 'green' },
+      }}
     />
   )
 }
