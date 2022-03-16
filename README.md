@@ -3,7 +3,7 @@
 
 An implementation with React and an Azure Function to upload (and encrypt) files to an Azure Blob Storage.
 
-To publish the solution I have implemented a GitHub Action (triggered on main branch) that publish the frontend and the backend to an Azure Static Web App.
+To deploy the solution I have implemented a GitHub Action (triggered on main branch) that publish the frontend and the backend to an Azure Static Web App.
 
 ## Tech Stack
 
