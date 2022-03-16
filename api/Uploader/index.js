@@ -7,7 +7,7 @@ module.exports = async function (context, req) {
         : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
 
     context.res = {
-        // status: 200, /* Defaults to 200 */
+        status: 200,
         body: responseMessage
     };
 }
