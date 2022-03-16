@@ -1,48 +1,33 @@
 const { BlobServiceClient } = require('@azure/storage-blob');
-const { v1: uuidv1} = require('uuid');
+const { v1: uuidv1 } = require('uuid');
+
+const multipart = require("parse-multipart");
 
 module.exports = async function (context, req) {
     context.log('Uploader trigger function processed a request.');
 
-    req.body.files.forEach(async (file) => {
+    const bodyBuffer = Buffer.from(req.body);
 
-        const blobServiceClient = new BlobServiceClient(process.env.StorageConnectionString);
-        const containerName = "container" + uuidv1();;
-        const blobName = file.name;
+    const boundary = multipart.getBoundary(req.headers['content-type']);
+    const parts = multipart.Parse(bodyBuffer, boundary);
+    const res = { body: { name: parts[0].filename, type: parts[0].type, data: parts[0].data.length } };
 
-        const containerClient = await blobServiceClient.getContainerClient(containerName);
+    const blobServiceClient = BlobServiceClient.fromConnectionString(
+        process.env.StorageConnectionString
+    );
 
-        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const containerName = "container" + uuidv1();;
 
-        const uploadBlobResponse = await blockBlobClient.upload(file, {
-            blockSize: 4 * 1024 * 1024, // 4MB block size
-            maxSinglePutSize: 256 * 1024 * 1024, // 256MB
-            parallelism: 5, // 5 parallel uploads
-            onProgress: (ev) => {
-                context.log(`Bytes uploaded: ${ev.loadedBytes}`);
-            }
-        });
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    await containerClient.create();
 
-        context.log(`Blob "${blobName}" uploaded successfully.`);
-    });
+    containerClient.setAccessPolicy('blob');
 
-    // const blobServiceClient = BlobServiceClient.fromConnectionString(
-    //     process.env.StorageConnectionString
-    // );
+    const blobName = res.body.name;
 
-    // const containerName = "container" + uuidv1();;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
-    // const containerClient = blobServiceClient.getContainerClient(containerName);
-    // await containerClient.create();
-
-    // containerClient.setAccessPolicy('blob');
-
-    // const blobName = "file1.txt";
-
-    // const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-
-    // const data = "Hello, World!";
-    // await blockBlobClient.upload(data, data.length);
+    await blockBlobClient.upload(parts[0].data, parts[0].data.length);
 
     context.res = {
         status: 200,

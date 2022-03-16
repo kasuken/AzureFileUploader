@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^12.9.0",
+    "parse-multipart": "^1.0.4",
     "uuid": "^8.3.2"
   },
   "devDependencies": {}
